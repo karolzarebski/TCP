@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ServerLibrary;
+using System.Net;
 using System.Text;
-using System.Threading.Tasks;
+using WeatherLibrary;
 
 namespace TCP
 {
@@ -10,6 +9,9 @@ namespace TCP
     {
         static void Main(string[] args)
         {
+            int bytes = Encoding.ASCII.GetBytes(Weather.GetWeather("warszawa")).Length;
+            ServerEchoAPM serverEchoAPM = new ServerEchoAPM(IPAddress.Parse("127.0.0.1"), 2048);
+            serverEchoAPM.Start();
         }
     }
 }
