@@ -7,26 +7,34 @@ using WeatherLibrary;
 
 namespace ServerLibrary
 {
-    public class ServerEchoAPM : ServerEcho
+    public class Server
     {
         public delegate void TransmissionDataDelegate(NetworkStream stream);
 
-        public ServerEchoAPM(IPAddress IP, int port) : base(IP, port)
-        {
+        private IPAddress _ipAddress;
+        private int _port;
+        private int _bufferSize = 85;
 
+        private TcpListener _tcpListener;
+        private NetworkStream _networkStream;
+
+        public Server (IPAddress IP, int port)
+        {
+            _ipAddress = IP;
+            _port = port;
         }
 
-        protected override void AcceptClient()
+        private void AcceptClient()
         {
             while (true)
             {
-                TcpClient tcpClient = TcpListener.AcceptTcpClient();
+                TcpClient tcpClient = _tcpListener.AcceptTcpClient();
 
-                Stream = tcpClient.GetStream();
+                _networkStream = tcpClient.GetStream();
 
                 TransmissionDataDelegate transmissionDelegate = new TransmissionDataDelegate(BeginDataTransmission);
 
-                transmissionDelegate.BeginInvoke(Stream, TransmissionCallback, tcpClient);
+                transmissionDelegate.BeginInvoke(_networkStream, TransmissionCallback, tcpClient);
             }
         }
 
@@ -36,13 +44,13 @@ namespace ServerLibrary
             client.Close();
         }
 
-        protected override void BeginDataTransmission(NetworkStream stream)
+        private void BeginDataTransmission(NetworkStream stream)
         {
-            byte[] buffer = new byte[Buffer_size];
+            byte[] buffer = new byte[_bufferSize];
 
             while (true)
             {
-                stream.Read(buffer, 0, Buffer_size);
+                stream.Read(buffer, 0, _bufferSize);
 
                 string location = Encoding.ASCII.GetString(buffer.Where(b => b != 0).ToArray());
 
@@ -57,9 +65,11 @@ namespace ServerLibrary
             }
         }
 
-        public override void Start()
+        public void Start()
         {
-            StartListening();
+            _tcpListener = new TcpListener(_ipAddress, _port);
+            _tcpListener.Start();
+
             AcceptClient();
         }
     }
