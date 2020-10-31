@@ -18,12 +18,20 @@ namespace ServerLibrary
         private TcpListener _tcpListener;
         private NetworkStream _networkStream;
 
-        public Server (IPAddress IP, int port)
+        /// <summary>
+        /// Initializes server
+        /// </summary>
+        /// <param name="IP">Server ip address</param>
+        /// <param name="port">Server port</param>
+        public Server(IPAddress IP, int port)
         {
             _ipAddress = IP;
             _port = port;
         }
 
+        /// <summary>
+        ///  Accepts client connection
+        /// </summary>
         private void AcceptClient()
         {
             while (true)
@@ -38,35 +46,62 @@ namespace ServerLibrary
             }
         }
 
+        /// <summary>
+        /// Close connection with client
+        /// </summary>
+        /// <param name="ar">client</param>
         private void TransmissionCallback(IAsyncResult ar)
         {
             TcpClient client = (TcpClient)ar.AsyncState;
             client.Close();
         }
 
+        /// <summary>
+        /// Receives data from client, downloads weather for given location and sends it back to client
+        /// </summary>
+        /// <param name="stream">client stream</param>
         private void BeginDataTransmission(NetworkStream stream)
         {
             byte[] buffer = new byte[_bufferSize];
 
+            string enterLocationMessage = "Enter location (Only english letters): ";
+
+            stream.Write(Encoding.ASCII.GetBytes(enterLocationMessage), 0, enterLocationMessage.Length);
+
             while (true)
             {
-                stream.Read(buffer, 0, _bufferSize);
-
-                string location = Encoding.ASCII.GetString(buffer.Where(b => b != 0).ToArray());
-
-                if (!location.Any(c => !char.IsLetter(c)))
+                try
                 {
-                    byte[] weather = Encoding.ASCII.GetBytes(Weather.GetWeather(location));
+                    stream.Read(buffer, 0, _bufferSize);
 
-                    stream.Write(weather, 0, weather.Length);
+                    string location = Encoding.ASCII.GetString(buffer.Where(b => b != 0).ToArray());
+
+                    if (!location.Any(c => !char.IsLetter(c)))
+                    {
+                        byte[] weather = Encoding.ASCII.GetBytes(Weather.GetWeather(location));
+
+                        stream.Write(weather, 0, weather.Length);
+
+                        stream.Write(Encoding.ASCII.GetBytes(enterLocationMessage), 0, enterLocationMessage.Length);
+                    }
+
+                    Array.Clear(buffer, 0, buffer.Length);
+                }
+                catch
+                {
+                    break;
                 }
 
-                Array.Clear(buffer, 0, buffer.Length);
             }
         }
 
+        /// <summary>
+        /// Starts tcp listener 
+        /// </summary>
         public void Start()
         {
+            Console.WriteLine("Starting server");
+
             _tcpListener = new TcpListener(_ipAddress, _port);
             _tcpListener.Start();
 
