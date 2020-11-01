@@ -3,8 +3,10 @@
  
 Server fetches weather data from OpenWeatherMap API based on given location eg. warsaw
 
-Example communication between server and client after data being successfully fetched:
-
+<ul>
+ <li>Example communication between server and client after data being successfully fetched:</li>
+<ul>
+ 
 Enter location (Only english letters): warszawa
 
 Fetching data from API
@@ -25,7 +27,9 @@ General weather: broken clouds</br>
 
 Enter location (Only english letters):
 
-Example communication between server and client after data being unsuccessfully fetched:
+<ul>
+ <li>Example communication between server and client after data being unsuccessfully fetched:</li>
+<ul>
 
 Enter location (Only english letters): warszawa1234
 
