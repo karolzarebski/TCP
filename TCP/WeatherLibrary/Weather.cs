@@ -28,7 +28,7 @@ namespace WeatherLibrary
 
             return new WeatherModel()
             {
-                Location = location,
+                Location = xmlDocument.SelectSingleNode("//city").Attributes["name"].Value,
                 Temperature = $"{temperatureNode.Attributes["value"].Value} 'C",
                 MinTemperature = $"{temperatureNode.Attributes["min"].Value} 'C",
                 MaxTemperature = $"{temperatureNode.Attributes["max"].Value} 'C",
