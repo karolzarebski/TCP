@@ -87,15 +87,18 @@ namespace ServerLibrary
 
                     string location = Encoding.ASCII.GetString(buffer.Where(b => IsCharCorrect(b)).ToArray());
 
-                    stream.Write(Encoding.ASCII.GetBytes(fethcingDataFromAPIMessage), 0, fethcingDataFromAPIMessage.Length);
+                    if (!string.IsNullOrEmpty(location))
+                    {
+                        stream.Write(Encoding.ASCII.GetBytes(fethcingDataFromAPIMessage), 0, fethcingDataFromAPIMessage.Length);
 
-                    byte[] weather = Encoding.ASCII.GetBytes(Weather.GetWeather(location));
+                        byte[] weather = Encoding.ASCII.GetBytes(Weather.GetWeather(location));
 
-                    stream.Write(weather, 0, weather.Length);
+                        stream.Write(weather, 0, weather.Length);
 
-                    stream.Write(Encoding.ASCII.GetBytes(enterLocationMessage), 0, enterLocationMessage.Length);
+                        stream.Write(Encoding.ASCII.GetBytes(enterLocationMessage), 0, enterLocationMessage.Length);
 
-                    Array.Clear(buffer, 0, buffer.Length);
+                        Array.Clear(buffer, 0, buffer.Length);
+                    }
                 }
                 catch
                 {
