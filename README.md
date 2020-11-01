@@ -1,4 +1,4 @@
-# TCP
+# TCP Server
  Asynchronous TCP Server
  
  Server fetches weather data from OpenWeatherMap API based on given location eg. warsaw
