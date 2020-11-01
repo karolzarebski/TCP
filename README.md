@@ -39,4 +39,15 @@ Server fetches weather data from OpenWeatherMap API based on given location eg. 
         Error: Serwer zdalny zwr?ci? b??d: (404) Nie znaleziono.
 
         Enter location (Only english letters):
-<ul>
+ </ul>  
+
+ <ul>
+    <li>
+        Example communication between server and client after using non ASCII chars:
+
+        Enter location (Only english letters): poznań
+
+        Non ASCII char detected (use only english letters), try again
+
+        Enter location (Only english letters):
+</ul>
