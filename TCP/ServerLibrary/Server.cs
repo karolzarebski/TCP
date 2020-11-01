@@ -63,7 +63,7 @@ namespace ServerLibrary
         /// <returns>True or false if given byte is ASCII</returns>
         private bool IsCharCorrect(byte asciiChar)
         {
-            return asciiChar >= 33 && asciiChar <= 126;
+            return asciiChar >= 32 && asciiChar <= 126;
         }
 
         /// <summary>
