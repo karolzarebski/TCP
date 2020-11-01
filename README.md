@@ -9,19 +9,19 @@ Enter location (Only english letters): warszawa
 
 Fetching data from API
 
-Location: warszawa
-Temperature: 7.01 'C
-Max temperature: 8.89 'C
-Min temperature: 5.56 'C
-Humidity: 93 %
-Pressure: 1018 hPa
-Feels like temperature: 3.56 'C
-Visibility: 9000 m
-Wind speed: 3.6 m/s
-Wind name: Gentle Breeze
-Wind direction: SouthEast
-Clouds: broken clouds
-General weather: broken clouds
+Location: warszawa</br>
+Temperature: 7.01 'C</br>
+Max temperature: 8.89 'C</br>
+Min temperature: 5.56 'C</br>
+Humidity: 93 %</br>
+Pressure: 1018 hPa</br>
+Feels like temperature: 3.56 'C</br>
+Visibility: 9000 m</br>
+Wind speed: 3.6 m/s</br>
+Wind name: Gentle Breeze</br>
+Wind direction: SouthEast</br>
+Clouds: broken clouds</br>
+General weather: broken clouds</br>
 
 Enter location (Only english letters):
 
