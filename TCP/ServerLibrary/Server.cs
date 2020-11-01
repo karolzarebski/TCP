@@ -106,7 +106,7 @@ namespace ServerLibrary
 
                     else if (location.IndexOf("??") >= 0)
                     {
-                        string nonAsciiCharsMessage = "\r\nNon ASCII char detected (use only english letters), try again\r\n\n";
+                        string nonAsciiCharsMessage = "\r\nNon ASCII char detected (use only english letters, exit to disconnect), try again\r\n\n";
 
                         stream.Write(Encoding.ASCII.GetBytes(nonAsciiCharsMessage), 0, nonAsciiCharsMessage.Length);
 
