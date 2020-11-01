@@ -38,6 +38,8 @@ namespace ServerLibrary
             {
                 TcpClient tcpClient = _tcpListener.AcceptTcpClient();
 
+                Console.WriteLine("Client connected");
+
                 _networkStream = tcpClient.GetStream();
 
                 TransmissionDataDelegate transmissionDelegate = new TransmissionDataDelegate(BeginDataTransmission);
@@ -54,16 +56,6 @@ namespace ServerLibrary
         {
             TcpClient client = (TcpClient)ar.AsyncState;
             client.Close();
-        }
-
-        /// <summary>
-        /// Checks if given byte is proper char
-        /// </summary>
-        /// <param name="asciiChar">Given char in ASCII</param>
-        /// <returns>True or false if given byte is ASCII</returns>
-        private bool IsCharCorrect(byte asciiChar)
-        {
-            return asciiChar >= 32 && asciiChar <= 126;
         }
 
         /// <summary>
@@ -85,15 +77,25 @@ namespace ServerLibrary
                 {
                     stream.Read(buffer, 0, _bufferSize);
 
-                    string location = Encoding.ASCII.GetString(buffer.Where(b => IsCharCorrect(b)).ToArray());
+                    string location = Encoding.ASCII.GetString(buffer.Where(b => b >= 32).ToArray());
 
-                    if (!string.IsNullOrEmpty(location))
+                    if (!string.IsNullOrEmpty(location) && location.IndexOf("??") < 0)
                     {
                         stream.Write(Encoding.ASCII.GetBytes(fethcingDataFromAPIMessage), 0, fethcingDataFromAPIMessage.Length);
 
                         byte[] weather = Encoding.ASCII.GetBytes(Weather.GetWeather(location));
 
                         stream.Write(weather, 0, weather.Length);
+
+                        stream.Write(Encoding.ASCII.GetBytes(enterLocationMessage), 0, enterLocationMessage.Length);
+
+                        Array.Clear(buffer, 0, buffer.Length);
+                    }
+                    else if (location.IndexOf("??") >= 0)
+                    {
+                        string nonAsciiCharsMessage = "\r\nNon ASCII char detected (use only english letters), try again\r\n\n";
+
+                        stream.Write(Encoding.ASCII.GetBytes(nonAsciiCharsMessage), 0, nonAsciiCharsMessage.Length);
 
                         stream.Write(Encoding.ASCII.GetBytes(enterLocationMessage), 0, enterLocationMessage.Length);
 
