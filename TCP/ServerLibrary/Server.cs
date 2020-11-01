@@ -56,6 +56,8 @@ namespace ServerLibrary
         {
             TcpClient client = (TcpClient)ar.AsyncState;
             client.Close();
+
+            Console.WriteLine("Client disconnected");
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace ServerLibrary
         {
             byte[] buffer = new byte[_bufferSize];
 
-            string enterLocationMessage = "Enter location (Only english letters): ";
+            string enterLocationMessage = "Enter location (Only english letters, exit to disconnect): ";
             string fethcingDataFromAPIMessage = "\r\nFetching data from API\r\n";
 
             stream.Write(Encoding.ASCII.GetBytes(enterLocationMessage), 0, enterLocationMessage.Length);
@@ -77,20 +79,31 @@ namespace ServerLibrary
                 {
                     stream.Read(buffer, 0, _bufferSize);
 
-                    string location = Encoding.ASCII.GetString(buffer.Where(b => b >= 32).ToArray());
+                    string location = Encoding.ASCII.GetString(buffer);
 
-                    if (!string.IsNullOrEmpty(location) && location.IndexOf("??") < 0)
+                    if (location.IndexOf("exit") >= 0)
                     {
-                        stream.Write(Encoding.ASCII.GetBytes(fethcingDataFromAPIMessage), 0, fethcingDataFromAPIMessage.Length);
+                        break;
+                    }
 
-                        byte[] weather = Encoding.ASCII.GetBytes(Weather.GetWeather(location));
+                    else if (location.IndexOf("??") < 0)
+                    {
+                        if (location.IndexOf("\r\n") < 0)
+                        {
+                            stream.Write(Encoding.ASCII.GetBytes(fethcingDataFromAPIMessage), 0, fethcingDataFromAPIMessage.Length);
 
-                        stream.Write(weather, 0, weather.Length);
+                            location = new string(location.Where(c => c != '\0').ToArray());
 
-                        stream.Write(Encoding.ASCII.GetBytes(enterLocationMessage), 0, enterLocationMessage.Length);
+                            byte[] weather = Encoding.ASCII.GetBytes(Weather.GetWeather(location));
+
+                            stream.Write(weather, 0, weather.Length);
+
+                            stream.Write(Encoding.ASCII.GetBytes(enterLocationMessage), 0, enterLocationMessage.Length);
+                        }
 
                         Array.Clear(buffer, 0, buffer.Length);
                     }
+
                     else if (location.IndexOf("??") >= 0)
                     {
                         string nonAsciiCharsMessage = "\r\nNon ASCII char detected (use only english letters), try again\r\n\n";
@@ -115,7 +128,7 @@ namespace ServerLibrary
         /// </summary>
         public void Start()
         {
-            Console.WriteLine("Starting server");
+            Console.WriteLine($"Starting server at: {_ipAddress}:{_port}");
 
             _tcpListener = new TcpListener(_ipAddress, _port);
             _tcpListener.Start();
